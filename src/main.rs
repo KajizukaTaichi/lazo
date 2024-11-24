@@ -866,7 +866,7 @@ impl Debug for Type {
             Type::Function(Function::BuiltIn(n)) => format!("function({n:?})"),
             Type::Symbol(v) => v.to_owned(),
             Type::List(l) => format!(
-                "'({})",
+                "[{}]",
                 l.iter()
                     .map(|x| format!("{x:?}"))
                     .collect::<Vec<String>>()
@@ -978,8 +978,7 @@ fn parse(token: String) -> Result<Type, LazoError> {
             }
             Type::Expr(list)
         // List case
-        } else if token.starts_with("'(") && token.ends_with(')') {
-            token.remove(0); // Removing single quote
+        } else if token.starts_with("[") && token.ends_with(']') {
             token.remove(0); // Removing outer syntax
             token.remove(token.len() - 1);
             let mut list = vec![];
@@ -1006,11 +1005,11 @@ fn tokenize(input: String) -> Result<Vec<String>, LazoError> {
 
     for c in input.chars() {
         match c {
-            '(' if !in_quote => {
+            '(' | '[' if !in_quote => {
                 current_token.push(c);
                 in_parentheses += 1;
             }
-            ')' if !in_quote => {
+            ')' | ']' if !in_quote => {
                 current_token.push(c);
                 if in_parentheses > 0 {
                     in_parentheses -= 1;
