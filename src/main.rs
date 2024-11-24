@@ -537,9 +537,9 @@ fn stdlib() -> Scope {
         ),
         (
             "cdr".to_string(),
-            Type::Function(Function::BuiltIn(|params, _| {
+            Type::Function(Function::BuiltIn(|params, scope| {
                 if params.len() == 1 {
-                    let list = params[0].get_list();
+                    let list = params[0].eval(scope)?.get_list();
                     Ok(Type::List(
                         list.get(1..list.len()).unwrap_or_default().to_vec(),
                     ))
