@@ -551,9 +551,7 @@ fn stdlib() -> Scope {
             Type::Function(Function::BuiltIn(|params, scope| {
                 if params.len() == 1 {
                     let list = params[0].eval(scope)?.get_list();
-                    Ok(Type::List(
-                        list.get(1..list.len()).unwrap_or_default().to_vec(),
-                    ))
+                    Ok(Type::List(list[1..list.len()].to_vec()))
                 } else {
                     Err(LazoError::Function(params.len(), 1))
                 }
@@ -653,7 +651,7 @@ fn stdlib() -> Scope {
                     };
 
                     let mut scope = scope.clone();
-                    for i in list.get(1..).unwrap_or_default() {
+                    for i in list[1..].to_vec() {
                         result =
                             Type::Expr(vec![func.clone(), result, i.clone()]).eval(&mut scope)?
                     }
@@ -925,7 +923,7 @@ impl Type {
                 func(expr[1..].to_vec(), scope)
             } else if let Type::Function(Function::UserDefined(args, code)) = func {
                 // Check arguments length
-                if args.len() != expr.get(1..).unwrap_or_default().len() {
+                if args.len() != expr[1..].len() {
                     return Err(LazoError::Function(expr[1..].len(), args.len()));
                 }
 
