@@ -236,6 +236,20 @@ fn stdlib() -> Scope {
             })),
         ),
         (
+            "format".to_string(),
+            Type::Function(Function::BuiltIn(|params, scope| {
+                if params.len() == 2 {
+                    Ok(Type::String(
+                        params[0]
+                            .get_string()
+                            .replace("{}", &params[1].eval(scope)?.get_string()),
+                    ))
+                } else {
+                    Err(LazoError::Function(params.len(), 2))
+                }
+            })),
+        ),
+        (
             "debug".to_string(),
             Type::Function(Function::BuiltIn(|params, scope| {
                 for i in params {
