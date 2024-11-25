@@ -521,6 +521,17 @@ fn stdlib() -> Scope {
             })),
         ),
         (
+            "cond".to_string(),
+            Type::Function(Function::BuiltIn(|params, scope| {
+                for i in params {
+                    if i.get_list()[0].eval(scope)?.get_bool() {
+                        return Ok(i.get_list()[1].eval(scope)?);
+                    }
+                }
+                Ok(Type::Null)
+            })),
+        ),
+        (
             "car".to_string(),
             Type::Function(Function::BuiltIn(|params, scope| {
                 if params.len() == 1 {
@@ -590,6 +601,20 @@ fn stdlib() -> Scope {
                         result.push(Type::Expr(vec![func.clone(), i]).eval(scope)?);
                     }
                     Ok(Type::List(result))
+                } else {
+                    Err(LazoError::Function(params.len(), 2))
+                }
+            })),
+        ),
+        (
+            "for".to_string(),
+            Type::Function(Function::BuiltIn(|params, scope| {
+                if params.len() == 2 {
+                    let func = params[1].eval(scope)?.clone();
+                    for i in params[0].eval(scope)?.get_list() {
+                        Type::Expr(vec![func.clone(), i]).eval(scope)?;
+                    }
+                    Ok(Type::Null)
                 } else {
                     Err(LazoError::Function(params.len(), 2))
                 }
