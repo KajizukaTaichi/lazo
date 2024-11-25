@@ -1,0 +1,10 @@
+(define (fizzbuzz n)
+    (print (cond
+        ((= 0 (% n 15)) "FizzBuzz")
+        ((= 0 (% n 3)) "Fizz")
+        ((= 0 (% n 5)) "Buzz")
+        (true n)
+    ) new-line)
+)
+
+(for (range 1 101) fizzbuzz)
